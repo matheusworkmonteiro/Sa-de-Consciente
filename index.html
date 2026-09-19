@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+    Saúde Consciente</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      -webkit-tap-highlight-color: transparent;
+    }
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    @keyframes pulse-soft {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.15); }
+    }
+    .pulse-dot {
+      animation: pulse-soft 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+
+
+<body class="bg-slate-100 flex justify-center items-center min-h-screen text-slate-800 font-sans">
+
+  <!-- Moldura Mobile simulando o ecrã de um telemóvel -->
+  <main id="app-container" class="w-full max-w-md bg-white min-h-screen sm:min-h-[850px] sm:h-[850px] sm:rounded-3xl shadow-2xl flex flex-col justify-between overflow-hidden relative border border-slate-200">
+
+    <!-- ================= ECRÃ 1: BOAS-VINDAS ================= -->
+    <section id="screen-welcome" class="p-6 flex flex-col justify-between flex-1 overflow-y-auto">
+      <div class="text-center pt-8">
+        <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-bold shadow-inner">
+          🌱
+        </div>
+        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Saúde Consciente</h1>
+        <p class="text-slate-500 text-sm mt-2 leading-relaxed">
+          Ciência descomplicada, combate a mitos das redes sociais e um tutor com IA para orientar a tua aprendizagem.
+        </p>
+      </div>
+
+      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 my-6">
+        <h2 class="font-bold text-sm text-slate-800 mb-2">O que vais encontrar:</h2>
+        <ul class="text-xs text-slate-600 space-y-2.5">
+          <li class="flex items-start gap-2">
+            <span class="text-emerald-600 font-bold">✓</span>
+            10 perguntas rápidas para mapear a tua rotina.
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-emerald-600 font-bold">✓</span>
+            <strong>Chatbot Tutor em destaque:</strong> desafios e questões sem respostas prontas.
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-emerald-600 font-bold">✓</span>
+            Módulos práticos de mitos, desafios e pílulas de evidência.
+          </li>
+        </ul>
+      </div>
+
+      <button id="btn-start" type="button" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] transition-all text-white font-bold rounded-xl shadow-lg shadow-emerald-200 cursor-pointer">
+        Iniciar Diagnóstico (1 min)
+      </button>
+    </section>
+
+    <!-- ================= ECRÃ 2: DIAGNÓSTICO (QUIZ) ================= -->
+    <section id="screen-quiz" class="p-6 flex flex-col justify-between flex-1 hidden overflow-y-auto">
+      <div>
+        <div class="flex items-center justify-between text-xs font-semibold text-slate-400 mb-2">
+          <span id="quiz-step-text">Pergunta 1 de 10</span>
+          <span id="quiz-percentage">10%</span>
+        </div>
+        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-6">
+          <div id="quiz-progress-bar" class="bg-emerald-500 h-full w-[10%] transition-all duration-300"></div>
+        </div>
+
+        <h2 id="quiz-question" class="text-lg font-bold text-slate-900 leading-snug mb-6">
+          A carregar pergunta...
+        </h2>
+
+        <div id="quiz-options-container" class="space-y-3"></div>
+      </div>
+
+      <p class="text-[11px] text-center text-slate-400 mt-4">
+        As respostas são confidenciais e personalizam o teu painel.
+      </p>
+    </section>
+
+    <!-- ================= ECRÃ 3: PAINEL PRINCIPAL (LAYOUT REORGANIZADO) ================= -->
+    <section id="screen-feed" class="flex flex-col flex-1 hidden h-full overflow-hidden bg-slate-50">
+      
+      <!-- Cabeçalho de Perfil -->
+      <div class="p-4 bg-white border-b border-slate-200 flex items-center justify-between flex-shrink-0">
+        <div>
+          <span class="text-[10px] font-bold tracking-wider text-emerald-600 uppercase">O Teu Diagnóstico</span>
+          <h2 id="profile-title" class="text-sm font-extrabold text-slate-900">Foco Principal</h2>
+        </div>
+        <button id="btn-restart" type="button" class="text-xs text-slate-400 hover:text-slate-600 underline cursor-pointer">Refazer Teste</button>
+      </div>
+
+      <!-- Conteúdo com Scroll -->
+      <div class="flex-1 overflow-y-auto p-4 space-y-5">
+
+        <!-- ================= BLOCO 1: CHAT EM DESTAQUE (TOPO) ================= -->
+        <div class="bg-gradient-to-br from-emerald-900 to-teal-800 text-white rounded-2xl p-4 shadow-lg relative overflow-hidden border border-emerald-700">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full pulse-dot"></span>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-300">Tutor Socrático IA</span>
+            </div>
+            <span class="bg-white/20 text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm">Ativo</span>
+          </div>
+
+          <!-- Balão de Notificação entre Aspas -->
+          <div class="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/15 my-2.5">
+            <div class="text-[10px] text-emerald-200 font-semibold mb-1 flex items-center gap-1">
+              💬 Nova notificação do assistente:
+            </div>
+            <p id="chat-teaser-quote" class="text-xs text-white/95 leading-relaxed italic font-medium">
+              "«Olá! Notei que tens curiosidade sobre dicas da internet. Vamos descobrir juntos se o que leste recentemente tem base científica ou é mito?»"
+            </p>
+          </div>
+
+          <button id="btn-open-chat" type="button" class="w-full mt-1 py-2.5 bg-emerald-400 hover:bg-emerald-300 active:scale-98 transition-all text-slate-950 font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm cursor-pointer">
+            <span>Abrir Conversa com o Tutor</span>
+            <span>→</span>
+          </button>
+        </div>
+
+        <!-- ================= BLOCO 2: OUTRAS OPÇÕES (SELECIONÁVEIS) ================= -->
+        <div>
+          <div class="flex items-center justify-between mb-2.5">
+            <h3 class="text-xs font-black uppercase tracking-wider text-slate-400">Outras Opções de Aprendizagem</h3>
+            <span class="text-[11px] text-slate-400">Escolhe para explorar:</span>
+          </div>
+
+          <!-- Botões Selecionáveis Grandes -->
+          <div class="grid grid-cols-3 gap-2" id="options-selector">
+            <button id="btn-opt-mitos" type="button" class="opt-card p-3 rounded-xl border-2 border-emerald-500 bg-white text-emerald-700 shadow-sm flex flex-col items-center justify-center text-center transition-all cursor-pointer">
+              <span class="text-lg mb-1">🔍</span>
+              <span class="text-xs font-bold leading-tight">Mitos vs Factos</span>
+            </button>
+            <button id="btn-opt-desafios" type="button" class="opt-card p-3 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-slate-600 shadow-sm flex flex-col items-center justify-center text-center transition-all cursor-pointer">
+              <span class="text-lg mb-1">🎯</span>
+              <span class="text-xs font-bold leading-tight">Desafios</span>
+            </button>
+            <button id="btn-opt-pilulas" type="button" class="opt-card p-3 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-slate-600 shadow-sm flex flex-col items-center justify-center text-center transition-all cursor-pointer">
+              <span class="text-lg mb-1">💡</span>
+              <span class="text-xs font-bold leading-tight">Pílulas</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Lista Dinâmica da Opção Selecionada -->
+        <div id="options-content-list" class="space-y-3 pb-4">
+          <!-- Renderizado via JavaScript -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= MODAL COMPLETO DO CHATBOT ================= -->
+    <div id="chat-modal" class="absolute inset-0 bg-white z-50 flex flex-col hidden">
+      <!-- Topo do Chat -->
+      <div class="p-3.5 bg-slate-900 text-white flex items-center justify-between shadow-md flex-shrink-0">
+        <div class="flex items-center gap-2">
+          <button id="btn-close-chat" type="button" class="p-1 rounded-lg hover:bg-slate-800 text-slate-300 cursor-pointer">
+            ← Voltar
+          </button>
+          <div class="border-l border-slate-700 pl-2">
+            <div class="text-xs font-bold">Tutor Socrático de Saúde</div>
+            <div class="text-[10px] text-emerald-400">Ativo • Não fornece respostas prontas</div>
+          </div>
+        </div>
+        <button id="btn-config-key" type="button" class="text-[11px] bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-md text-amber-300 font-semibold cursor-pointer">
+          🔑 Chave API
+        </button>
+      </div>
+
+      <!-- Barra de aviso de chave API caso não configurada -->
+      <div id="api-key-bar" class="p-2 bg-amber-50 border-b border-amber-200 flex items-center justify-between text-xs text-amber-800">
+        <span>Insere a tua chave Gemini para ativar a IA.</span>
+        <button id="btn-prompt-key" class="font-bold underline ml-2">Configurar</button>
+      </div>
+
+      <!-- Mensagens da Conversa -->
+      <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50">
+        <div class="flex gap-2 items-start">
+          <div class="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">IA</div>
+          <div class="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-200 text-xs leading-relaxed text-slate-700 shadow-sm max-w-[85%]">
+            Olá! Sou o teu tutor socrático. O meu objetivo não é dar-te respostas diretas nem prescrever dietas ou treinos, mas sim ajudar-te a pensar criticamente e a investigar o que é verdade ou mito. Qual é o tema que queres explorar hoje?
+          </div>
+        </div>
+      </div>
+
+      <!-- Indicador a processar -->
+      <div id="typing-indicator" class="px-4 py-1 text-[11px] text-slate-400 italic hidden bg-slate-50">
+        O tutor está a formular uma pergunta desafiadora...
+      </div>
+
+      <!-- Formulário de Envio -->
+      <form id="chat-form" class="p-3 bg-white border-t border-slate-200 flex gap-2 flex-shrink-0">
+        <input 
+          type="text" 
+          id="chat-input" 
+          placeholder="Pergunta algo sobre dietas, sono ou mitos..." 
+          class="flex-1 text-xs bg-slate-100 border border-slate-300 rounded-xl px-3 py-2.5 focus:outline-none focus:border-emerald-500"
+          required
+          autocomplete="off"
+        />
+        <button 
+          type="submit" 
+          id="btn-send-msg" 
+          class="bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-emerald-700 active:scale-95 transition-all cursor-pointer">
+          Enviar
+        </button>
+      </form>
+    </div>
+
+  </main>
+
+  <script>
+    // ==========================================
+    // 1. BASE DE DADOS DO APLICATIVO
+    // ==========================================
+    const perguntasQuiz = [
+      {
+        id: 1,
+        pergunta: "Onde costumas ver mais frequentemente dicas sobre saúde e corpo?",
+        opcoes: [
+          { texto: "Redes sociais (TikTok, Instagram, YouTube)", categoria: "mitos", peso: 2 },
+          { texto: "Conversas com amigos ou familiares", categoria: "mitos", peso: 1 },
+          { texto: "Pesquisas no Google / portais de notícias", categoria: "geral", peso: 1 },
+          { texto: "Profissionais de saúde credenciados", categoria: "consciente", peso: 0 }
+        ]
+      },
+      {
+        id: 2,
+        pergunta: "Ao ver uma dica de emagrecimento rápido ou treino milagroso na internet, o que fazes?",
+        opcoes: [
+          { texto: "Acredito e tento logo aplicar", categoria: "mitos", peso: 2 },
+          { texto: "Fico com dúvidas, sem saber onde confirmar", categoria: "mitos", peso: 1 },
+          { texto: "Desconfio e procuro fontes científicas", categoria: "consciente", peso: 0 },
+          { texto: "Costumo ignorar esse tipo de conteúdo", categoria: "consciente", peso: 0 }
+        ]
+      },
+      {
+        id: 3,
+        pergunta: "Como descreves a tua rotina habitual de alimentação?",
+        opcoes: [
+          { texto: "Salto refeições ou como em horários irregulares", categoria: "alimentacao", peso: 2 },
+          { texto: "Consumo muitos ultraprocessados pela facilidade", categoria: "alimentacao", peso: 2 },
+          { texto: "Tento equilibrar, mas sinto falta de orientação segura", categoria: "alimentacao", peso: 1 },
+          { texto: "Privilegio comida caseira e fresca na maioria dos dias", categoria: "consciente", peso: 0 }
+        ]
+      },
+      {
+        id: 4,
+        pergunta: "Em média, quanta água bebes por dia?",
+        opcoes: [
+          { texto: "Menos de 1 litro (só quando sinto muita sede)", categoria: "hidratacao", peso: 2 },
+          { texto: "Entre 1 e 2 litros", categoria: "hidratacao", peso: 1 },
+          { texto: "Mais de 2 litros regularmente", categoria: "consciente", peso: 0 },
+          { texto: "Não controlo; bebo mais sumos, refrigerantes ou energéticos", categoria: "hidratacao", peso: 2 }
+        ]
+      },
+      {
+        id: 5,
+        pergunta: "Quanto tempo livre passas em frente a ecrãs (telemóvel, computador, jogos)?",
+        opcoes: [
+          { texto: "Mais de 6 horas por dia", categoria: "telas", peso: 2 },
+          { texto: "Entre 3 e 5 horas", categoria: "telas", peso: 1 },
+          { texto: "Menos de 3 horas", categoria: "consciente", peso: 0 },
+          { texto: "Sinto cansaço visual e mental constante", categoria: "telas", peso: 2 }
+        ]
+      },
+      {
+        id: 6,
+        pergunta: "Como avalias o teu nível de atividade física semanal?",
+        opcoes: [
+          { texto: "Sedentário (passo a maior parte do dia sentado)", categoria: "movimento", peso: 2 },
+          { texto: "Leve (faço deslocações a pé pontuais)", categoria: "movimento", peso: 1 },
+          { texto: "Moderado (pratico desporto 2 a 3 vezes por semana)", categoria: "consciente", peso: 0 },
+          { texto: "Intenso (treino 4 vezes ou mais)", categoria: "consciente", peso: 0 }
+        ]
+      },
+      {
+        id: 7,
+        pergunta: "Se não praticas exercício com regularidade, qual é o maior obstáculo?",
+        opcoes: [
+          { texto: "Falta de tempo ou rotina desorganizada", categoria: "movimento", peso: 2 },
+          { texto: "Falta de motivação / acho desinteressante", categoria: "movimento", peso: 2 },
+          { texto: "Insegurança ou desconforto em ginásios", categoria: "movimento", peso: 1 },
+          { texto: "Já mantenho uma rotina ativa", categoria: "consciente", peso: 0 }
+        ]
+      },
+      {
+        id: 8,
+        pergunta: "Quantas horas costumas dormir e com que disposição acordas?",
+        opcoes: [
+          { texto: "Menos de 6 horas; acordo exausto(a)", categoria: "sono", peso: 2 },
+          { texto: "Entre 6 e 7 horas; demoro a despertar", categoria: "sono", peso: 1 },
+          { texto: "8 horas ou mais com boa energia", categoria: "consciente", peso: 0 },
+          { texto: "Horários desregulados pelo uso do telemóvel à noite", categoria: "sono", peso: 2 }
+        ]
+      },
+      {
+        id: 9,
+        pergunta: "Como geres momentos de maior stresse escolar ou prazos?",
+        opcoes: [
+          { texto: "Frequentemente sobrecarregado(a) e sem pausas", categoria: "bem-estar", peso: 2 },
+          { texto: "Sinto picos fortes de ansiedade em avaliações", categoria: "bem-estar", peso: 1 },
+          { texto: "Mantenho o equilíbrio na maior parte do tempo", categoria: "consciente", peso: 0 },
+          { texto: "Raramente experiencio stresse significativo", categoria: "consciente", peso: 0 }
+        ]
+      },
+      {
+        id: 10,
+        pergunta: "Que formato consideras mais cativante para aprender?",
+        opcoes: [
+          { texto: "Desmascarar 'Mito vs. Facto' com rapidez", categoria: "formato_mitos", peso: 0 },
+          { texto: "Desafios práticos diários", categoria: "formato_desafios", peso: 0 },
+          { texto: "Pílulas de evidência e ciência sem rodeios", categoria: "formato_pilulas", peso: 0 },
+          { texto: "Dialogar com o Tutor IA para questionar boatos", categoria: "formato_chat", peso: 0 }
+        ]
+      }
+    ];
+
+    const baseConteudos = {
+      mitos: [
+        {
+          titulo: "Água morna com limão em jejum queima gordura?",
+          categoria: "Metabolismo & Nutrição",
+          tipo: "MITO",
+          explicacao: "Nenhum alimento isolado possui propriedades químicas para dissolver gordura corporal. A perda de gordura depende de equilíbrio metabólico a longo prazo. O limão apenas fornece vitamina C e a água hidrata o organismo.",
+          fonte: "Direção-Geral da Saúde / Guia Alimentar"
+        },
+        {
+          titulo: "Transpirar muito significa emagrecer mais?",
+          categoria: "Fisiologia do Exercício",
+          tipo: "MITO",
+          explicacao: "A transpiração é apenas um mecanismo biológico de arrefecimento da pele. O peso perdido no suor é composto por água e sais minerais, e não gordura corporal.",
+          fonte: "American College of Sports Medicine (ACSM)"
+        },
+        {
+          titulo: "A luz dos ecrãs antes de dormir atrasa o sono?",
+          categoria: "Sono & Neurociência",
+          tipo: "VERDADE",
+          explicacao: "A luz azul emitida por telemóveis inibe a libertação do neurotransmissor melatonina, fazendo com que o cérebro assuma que ainda é dia e tornando o sono superficial.",
+          fonte: "National Sleep Foundation"
+        },
+        {
+          titulo: "É obrigatório eliminar todos os hidratos de carbono?",
+          categoria: "Nutrição",
+          tipo: "MITO",
+          explicacao: "Hidratos de carbono complexos (como aveia, leguminosas, tubérculos e fruta) são a fonte primária de energia para o cérebro e fornecem fibras essenciais para o intestino.",
+          fonte: "Organização Mundial da Saúde (OMS)"
+        }
+      ],
+      desafios: [
+        {
+          titulo: "1 Copo de água ao acordar",
+          categoria: "Hidratação",
+          descricao: "Bebe um copo de água mal saias da cama para reidratar o corpo após várias horas de repouso.",
+          duracao: "Manhã"
+        },
+        {
+          titulo: "30 Minutos sem ecrãs antes de deitar",
+          categoria: "Higiene do Sono",
+          descricao: "Pousa o telemóvel 30 minutos antes da hora de dormir. Experimenta ler algumas páginas ou ouvir música ambiente.",
+          duracao: "Noite"
+        },
+        {
+          titulo: "Pausa ativa de 5 minutos",
+          categoria: "Movimento",
+          descricao: "Se estás sentado a estudar há mais de 1 hora, levanta-te, caminha um pouco e alonga o corpo.",
+          duracao: "Tarde"
+        }
+      ],
+      pilulas: [
+        {
+          tag: "Fadiga Visual",
+          titulo: "A Regra 20-20-20",
+          descricao: "A cada 20 minutos de foco no ecrã, foca o olhar num ponto a cerca de 6 metros durante 20 segundos para relaxar a musculatura dos olhos."
+        },
+        {
+          tag: "Hidratação",
+          titulo: "Termómetro biológico da água",
+          descricao: "A tonalidade da urina é o melhor indicador diário: um tom amarelo-palha claro representa boa hidratação; amarelo escuro sinaliza a necessidade de hidratação imediata."
+        }
+      ]
+    };
+
+    // ==========================================
+    // 2. ESTADO E NAVEGAÇÃO
+    // ==========================================
+    let currentStep = 0;
+    let userScores = { mitos: 0, alimentacao: 0, hidratacao: 0, telas: 0, movimento: 0, sono: 0, "bem-estar": 0 };
+    let selectedOptionTab = "mitos";
+
+    const screenWelcome = document.getElementById("screen-welcome");
+    const screenQuiz = document.getElementById("screen-quiz");
+    const screenFeed = document.getElementById("screen-feed");
+    const chatModal = document.getElementById("chat-modal");
+
+    const btnStart = document.getElementById("btn-start");
+    const btnRestart = document.getElementById("btn-restart");
+    const btnOpenChat = document.getElementById("btn-open-chat");
+    const btnCloseChat = document.getElementById("btn-close-chat");
+
+    const quizStepText = document.getElementById("quiz-step-text");
+    const quizPercentage = document.getElementById("quiz-percentage");
+    const quizProgressBar = document.getElementById("quiz-progress-bar");
+    const quizQuestion = document.getElementById("quiz-question");
+    const quizOptionsContainer = document.getElementById("quiz-options-container");
+
+    const profileTitle = document.getElementById("profile-title");
+    const chatTeaserQuote = document.getElementById("chat-teaser-quote");
+    const optionsContentList = document.getElementById("options-content-list");
+
+    const btnOptMitos = document.getElementById("btn-opt-mitos");
+    const btnOptDesafios = document.getElementById("btn-opt-desafios");
+    const btnOptPilulas = document.getElementById("btn-opt-pilulas");
+
+    // Iniciar Diagnóstico
+    btnStart.addEventListener("click", () => {
+      screenWelcome.classList.add("hidden");
+      screenQuiz.classList.remove("hidden");
+      currentStep = 0;
+      loadQuestion();
+    });
+
+    function loadQuestion() {
+      const q = perguntasQuiz[currentStep];
+      const total = perguntasQuiz.length;
+      const percent = Math.round(((currentStep + 1) / total) * 100);
+
+      quizStepText.innerText = `Pergunta ${currentStep + 1} de ${total}`;
+      quizPercentage.innerText = `${percent}%`;
+      quizProgressBar.style.width = `${percent}%`;
+
+      quizQuestion.innerText = q.pergunta;
+      quizOptionsContainer.innerHTML = "";
+
+      q.opcoes.forEach((opcao) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 bg-white hover:border-emerald-500 hover:bg-emerald-50/50 active:scale-[0.99] transition-all text-sm font-medium text-slate-700 shadow-sm cursor-pointer";
+        btn.innerText = opcao.texto;
+        btn.onclick = () => selectOption(opcao);
+        quizOptionsContainer.appendChild(btn);
+      });
+    }
+
+    function selectOption(opcao) {
+      if (userScores[opcao.categoria] !== undefined) {
+        userScores[opcao.categoria] += opcao.peso;
+      }
+      currentStep++;
+      if (currentStep < perguntasQuiz.length) {
+        loadQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      let highestCategory = "mitos";
+      let maxScore = -1;
+
+      for (const [cat, score] of Object.entries(userScores)) {
+        if (score > maxScore) {
+          maxScore = score;
+          highestCategory = cat;
+        }
+      }
+
+      screenQuiz.classList.add("hidden");
+      screenFeed.classList.remove("hidden");
+
+      const titles = {
+        mitos: "Alerta contra Mitos da Internet",
+        alimentacao: "Construção de Comida Saudável",
+        hidratacao: "Atenção à Hidratação Diária",
+        telas: "Equilíbrio de Ecrãs & Descanso",
+        movimento: "Movimento & Rotina Ativa",
+        sono: "Qualidade do Sono & Energia",
+        "bem-estar": "Pausas & Redução do Stresse"
+      };
+
+      const teasers = {
+        mitos: '"«Reparei que encontras muitas receitas e dicas na internet. Sabias que a maioria não tem base científica? Vamos desvendar uma agora?»"',
+        alimentacao: '"«Que tal refletirmos sobre o que torna uma refeição verdadeiramente nutritiva sem recorrer a dietas radicais?»"',
+        hidratacao: '"«A hidratação afeta diretamente a tua concentração. Como achas que o teu corpo avisa que precisa de água?»"',
+        telas: '"«O uso de ecrãs à noite engana o cérebro. Queres descobrir como ter noites de descanso muito mais profundas?»"',
+        movimento: '"«Manter o corpo ativo não exige ginásios caros. Que tal explorarmos pequenas mudanças na tua rotina diária?»"',
+        sono: '"«Acordas sem energia? O problema pode não ser o número de horas, mas sim a qualidade do descanso. Vamos investigar?»"',
+        "bem-estar": '"«Momentos de estudo exigem pausas estratégicas. O que costumas fazer para desanuviar a mente?»"'
+      };
+
+      profileTitle.innerText = titles[highestCategory] || "Hábitos Saudáveis";
+      chatTeaserQuote.innerText = teasers[highestCategory] || teasers.mitos;
+
+      selectOptionTab("mitos");
+    }
+
+    // ==========================================
+    // 3. SELEÇÃO DE CARTÕES ("OUTRAS OPÇÕES")
+    // ==========================================
+    function selectOptionTab(tabName) {
+      selectedOptionTab = tabName;
+
+      // Reseta todos os botões selecionáveis
+      [btnOptMitos, btnOptDesafios, btnOptPilulas].forEach((btn) => {
+        btn.className = "opt-card p-3 rounded-xl border border-slate-200 bg-white hover:border-slate-300 text-slate-500 shadow-sm flex flex-col items-center justify-center text-center transition-all cursor-pointer";
+      });
+
+      // Aplica estilo ativo ao botão escolhido
+      const activeBtn = document.getElementById(`btn-opt-${tabName}`);
+      activeBtn.className = "opt-card p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50/50 text-emerald-800 shadow-md flex flex-col items-center justify-center text-center transition-all cursor-pointer font-extrabold";
+
+      renderOptionsContent();
+    }
+
+    btnOptMitos.onclick = () => selectOptionTab("mitos");
+    btnOptDesafios.onclick = () => selectOptionTab("desafios");
+    btnOptPilulas.onclick = () => selectOptionTab("pilulas");
+
+    function renderOptionsContent() {
+      optionsContentList.innerHTML = "";
+
+      if (selectedOptionTab === "mitos") {
+        baseConteudos.mitos.forEach((item) => {
+          const card = document.createElement("div");
+          card.className = "p-4 bg-white border border-slate-200 rounded-2xl shadow-sm";
+          card.innerHTML = `
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">${item.categoria}</span>
+              <span class="text-xs font-black px-2 py-0.5 rounded-full ${
+                item.tipo === "MITO" ? "bg-red-100 text-red-600" : "bg-emerald-100 text-emerald-700"
+              }">${item.tipo}</span>
+            </div>
+            <h4 class="font-bold text-sm text-slate-900 mb-1.5">${item.titulo}</h4>
+            <p class="text-xs text-slate-600 leading-relaxed mb-3">${item.explicacao}</p>
+            <div class="text-[10px] text-slate-400 italic">Fonte: ${item.fonte}</div>
+          `;
+          optionsContentList.appendChild(card);
+        });
+      } else if (selectedOptionTab === "desafios") {
+        baseConteudos.desafios.forEach((item) => {
+          const card = document.createElement("div");
+          card.className = "p-4 bg-white border border-slate-200 rounded-2xl flex items-start justify-between gap-3 shadow-sm";
+          card.innerHTML = `
+            <div>
+              <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">${item.duracao} • ${item.categoria}</span>
+              <h4 class="font-bold text-sm text-slate-900 mt-0.5">${item.titulo}</h4>
+              <p class="text-xs text-slate-600 mt-1 leading-relaxed">${item.descricao}</p>
+            </div>
+            <input type="checkbox" class="w-5 h-5 accent-emerald-600 rounded cursor-pointer mt-1 flex-shrink-0" />
+          `;
+          optionsContentList.appendChild(card);
+        });
+      } else if (selectedOptionTab === "pilulas") {
+        baseConteudos.pilulas.forEach((item) => {
+          const card = document.createElement("div");
+          card.className = "p-4 bg-white border border-slate-200 rounded-2xl shadow-sm";
+          card.innerHTML = `
+            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">${item.tag}</span>
+            <h4 class="font-bold text-sm text-slate-900 mt-1 mb-1.5">${item.titulo}</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">${item.descricao}</p>
+          `;
+          optionsContentList.appendChild(card);
+        });
+      }
+    }
+
+    // ==========================================
+    // 4. MODAL E FUNCIONAMENTO DO CHAT
+    // ==========================================
+    btnOpenChat.addEventListener("click", () => {
+      chatModal.classList.remove("hidden");
+      checkApiKey();
+    });
+
+    btnCloseChat.addEventListener("click", () => {
+      chatModal.classList.add("hidden");
+    });
+
+    btnRestart.addEventListener("click", () => {
+      userScores = { mitos: 0, alimentacao: 0, hidratacao: 0, telas: 0, movimento: 0, sono: 0, "bem-estar": 0 };
+      screenFeed.classList.add("hidden");
+      screenWelcome.classList.remove("hidden");
+    });
+
+    // Lógica do Chatbot Socrático com Gemini
+    const chatForm = document.getElementById("chat-form");
+    const chatInput = document.getElementById("chat-input");
+    const chatMessages = document.getElementById("chat-messages");
+    const typingIndicator = document.getElementById("typing-indicator");
+    const apiKeyBar = document.getElementById("api-key-bar");
+    const btnConfigKey = document.getElementById("btn-config-key");
+    const btnPromptKey = document.getElementById("btn-prompt-key");
+
+    let chatHistory = [];
+
+    const SYSTEM_INSTRUCTION = `
+És um Tutor Educativo e Socrático de Hábitos Saudáveis para estudantes e adolescentes em contexto escolar.
+OBJETIVO: Estimular o pensamento crítico, a investigação autónoma e a reflexão sobre boatos e mitos das redes sociais.
+
+REGRAS OBRIGATÓRIAS:
+1. NUNCA forneças soluções finais, respostas de bandeja nem resumos prontos.
+2. NUNCA prescrevas dietas, contagem de calorias, suplementos, medicamentos ou rotinas de treino.
+3. Responde com questões estimulantes, analogias do dia a dia e pistas graduais.
+4. Se o utilizador perguntar se uma receita rápida de emagrecimento funciona, questiona qual é o mecanismo biológico que ele imagina por trás disso e onde encontrou essa informação.
+5. Mantém um tom próximo, educativo, informal e respostas curtas (máximo 2 a 3 pequenos parágrafos).
+`;
+
+    function getApiKey() {
+      return localStorage.getItem("GEMINI_API_KEY") || "";
+    }
+
+    function checkApiKey() {
+      const key = getApiKey();
+      if (key) {
+        apiKeyBar.classList.add("hidden");
+      } else {
+        apiKeyBar.classList.remove("hidden");
+      }
+    }
+
+    function requestKey() {
+      const currentKey = getApiKey();
+      const newKey = prompt("Introduz a tua chave gratuita da API do Google Gemini:", currentKey);
+      if (newKey !== null) {
+        localStorage.setItem("GEMINI_API_KEY", newKey.trim());
+        checkApiKey();
+      }
+    }
+
+    btnConfigKey.onclick = requestKey;
+    btnPromptKey.onclick = requestKey;
+
+    chatForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const userText = chatInput.value.trim();
+      if (!userText) return;
+
+      const apiKey = getApiKey();
+      if (!apiKey) {
+        requestKey();
+        return;
+      }
+
+      appendMessage("user", userText);
+      chatInput.value = "";
+      chatHistory.push({ role: "user", parts: [{ text: userText }] });
+
+      typingIndicator.classList.remove("hidden");
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${getApiKey()}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: chatHistory,
+              systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
+              generationConfig: { temperature: 0.7, maxOutputTokens: 500 }
+            })
+          }
+        );
+
+        const data = await response.json();
+
+        if (data.error) {
+          appendMessage("ia", `Aviso sobre a chave da API: ${data.error.message}`);
+        } else {
+          const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Pergunta interessante... Como achas que podemos confirmar essa informação cientificamente?";
+          appendMessage("ia", replyText);
+          chatHistory.push({ role: "model", parts: [{ text: replyText }] });
+        }
+      } catch (err) {
+        appendMessage("ia", "Não foi possível ligar aos servidores. Verifica a tua ligação ou chave de API.");
+      } finally {
+        typingIndicator.classList.add("hidden");
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+    });
+
+    function appendMessage(role, text) {
+      const msgDiv = document.createElement("div");
+      if (role === "user") {
+        msgDiv.className = "flex gap-2 items-start justify-end";
+        msgDiv.innerHTML = `
+          <div class="bg-emerald-600 text-white p-3 rounded-2xl rounded-tr-none text-xs leading-relaxed shadow-sm max-w-[85%]">
+            ${escapeHtml(text)}
+          </div>
+        `;
+      } else {
+        msgDiv.className = "flex gap-2 items-start";
+        msgDiv.innerHTML = `
+          <div class="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">IA</div>
+          <div class="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-200 text-xs leading-relaxed text-slate-700 shadow-sm max-w-[85%]">
+            ${formatBotResponse(text)}
+          </div>
+        `;
+      }
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function formatBotResponse(text) {
+      return escapeHtml(text)
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br/>');
+    }
+  </script>
+</body>
+</html>
